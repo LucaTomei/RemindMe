@@ -1,0 +1,5 @@
+Reming Gui to Add
+- Main e stastup non compilabili
+- aggiungi tutti i tput
+- sposta tutte le icone in /usr/share/applications
+- riscrivi tutto il main generator senza label e con free xk non va bene il valgrind 
