@@ -1,6 +1,5 @@
 #include "header.h"
 
-
 int main(int argc, char *argv[]) {
   downloadSettingIcon();
   pre_welcome();
@@ -13,16 +12,8 @@ int main(int argc, char *argv[]) {
   g_object_unref (app);
 
   removeAndExit();
-
   return 0;
 }
-
-
-
-
-
-
-
 
 
 /* FUNZIONI*/
@@ -316,7 +307,7 @@ static void on_responseSublInstallerFunc(GtkDialog *dialog, gint response_id, gp
     }
     response = '\0';
     // Create desktop file
-    FILE *f = fopen("sublime_text.desktop", "w");
+    FILE *f = fopen("sublime-text-3.desktop", "w");
     if(f == NULL) handle_error("\n\nImpossibile creare il file in scrittura\n\n");
 
     char* init_test = "[Desktop Entry]\nVersion=1.0\nType=Application\nName=Sublime Text\nGenericName=Text Editor\nComment=Sophisticated text editor for code, markup and prose\nExec=";
@@ -334,8 +325,7 @@ static void on_responseSublInstallerFunc(GtkDialog *dialog, gint response_id, gp
     char* icon_location = append(tmp1, "\n");
     char* exe_icon = append(tmp_icon, icon_location);
 
-    char* post_one = append(exe_icon, "Categories=TextEditor;Development;\nStartupNotify=true\nActions=Window;Document;\n\n[Desktop Action Window]\nName=New Window\nExec=");
-  
+    char* post_one = append(exe_icon, "Categories=TextEditor;Development;\nStartupNotify=true\nActions=Window;Document;\n\n[Desktop Action Window]\nName=New Window\nStartupWMClass=subl\nExec=");
 
     char* tmp2 = append(subl_folder, "sublime_text ");
     char* exe_post = append(tmp2, "-n\n");
@@ -370,7 +360,7 @@ static void on_responseSublInstallerFunc(GtkDialog *dialog, gint response_id, gp
     free(fileOK);
 
     // copy desktop file in location
-    char* copy = "cp sublime_text.desktop ";
+    char* copy = "cp sublime-text-3.desktop ";
     char* homedir1 = append(copy, pw->pw_dir);
     char* local = append(homedir1, "/.local/share/applications/");
     system(local);
