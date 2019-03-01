@@ -26,14 +26,9 @@ char* append(char* string1, char* string2){
 }
 
 
-
-
-
-
 static void on_response (GtkDialog *dialog, gint response_id, gpointer user_data){
   gtk_widget_destroy (GTK_WIDGET (dialog));
 }
-
 
 static void on_responseE_liquidCalcFunc(GtkDialog *dialog, gint response_id, gpointer user_data){
   gtk_widget_destroy (GTK_WIDGET (dialog));
@@ -275,53 +270,54 @@ static void autoBackupFunc (GtkButton *button, gpointer   user_data){
 static void on_responseSublInstallerFunc(GtkDialog *dialog, gint response_id, gpointer user_data){
   gtk_widget_destroy (GTK_WIDGET (dialog));
   char response;
+  int ret;
   if(response_id == -5) {
-    system("wget https://www.dropbox.com/s/9tl1ctd4amlwvtc/sublime_text.tar.gz?dl=0 -O sublime_text.tar.gz");
-    system("mkdir sublime_text");
-    system("tar -xzvf sublime_text.tar.gz -C sublime_text");
+    ret = system("wget https://www.dropbox.com/s/9tl1ctd4amlwvtc/sublime_text.tar.gz?dl=0 -O sublime_text.tar.gz");
+    if(ret != 0)	handle_error("Error on downloading sublime files!");
+    
+    ret = system("sudo mkdir /opt/sublime_text");
+    if(ret != 0)	handle_error("Error on creating sublime directory!");
+    
+    ret = system("sudo tar -xzvf sublime_text.tar.gz -C /opt/sublime_text");
+    if(ret != 0)	handle_error("Error on extracting files!");
 
+    // Get home directory
     struct passwd *pw = getpwuid(getuid());
     char *homedir = pw->pw_dir;
 
-    char* cp = append("cp -R sublime_text ", homedir);      
-    char* homeSubl = append(cp, "/");
-    system(homeSubl);
-    free(cp);
-    free(homeSubl); 
+    ret = system("sudo chmod 777 -R /opt/sublime_text");
+    if(ret != 0)	handle_error("Error on permissions!");
 
-    char* chmod1 = append("chmod a+x ", homedir);
-    char* chmod = append(chmod1, "/sublime_text/sublime_text");         
 
-    system(chmod);
-    free(chmod1);
-    free(chmod);
+    char* chmod = "sudo chmod a+x /opt/sublime_text/sublime_text";       
+
+    ret = system(chmod);
+    if(ret != 0)	handle_error("Error on execution permissions!");
 
     printf("Do You Want to set 'subl' command global in your system? [Y/n]\n");
     scanf("\n%c", &response);
     if(response == 'Y' || response == 'y'){
-      char* global = append("sudo ln -sv ", homedir);
-      char* global_subl = append(global, "/sublime_text/sublime_text /usr/local/bin/subl");
-      system(global_subl);
-      free(global);
-      free(global_subl);
+      char* global = "sudo ln -sv /opt/sublime_text/sublime_text /usr/local/bin/subl";
+      ret = system(global);
+      if(ret != 0)	handle_error("Error on setting global sublime");
     }
     response = '\0';
-    // Create desktop file
+    // Create desktop file in home directory
+	ret = chdir(homedir);
+    if(ret != 0)	handle_error("Error change directory");
     FILE *f = fopen("sublime-text-3.desktop", "w");
     if(f == NULL) handle_error("\n\nImpossibile creare il file in scrittura\n\n");
 
     char* init_test = "[Desktop Entry]\nVersion=1.0\nType=Application\nName=Sublime Text\nGenericName=Text Editor\nComment=Sophisticated text editor for code, markup and prose\nExec=";
   
-    char* subl_folder = append(homedir, "/sublime_text/");  
+    char* subl_folder = "/opt/sublime_text/";
     char* tmp = append(subl_folder, "sublime_text ");
     char* exe_location = append(tmp, "%F\n");
 
     char* exe_dir = append(init_test, exe_location);
   
     char* tmp_icon = append(exe_dir, "Terminal=false\nMimeType=text/plain;\n");
-    char* ttt = append("Icon=", homedir);
-    char* subl_folder1 = append(ttt, "/sublime_text/");   
-    char* tmp1 = append(subl_folder1, "Icon/256x256/sublime-text.png");
+    char* tmp1 = "Icon=/opt/sublime_text/Icon/256x256/sublime-text.png";
     char* icon_location = append(tmp1, "\n");
     char* exe_icon = append(tmp_icon, icon_location);
 
@@ -340,15 +336,11 @@ static void on_responseSublInstallerFunc(GtkDialog *dialog, gint response_id, gp
     fprintf(f, "%s\n", fileOK);
     fclose(f);
 
-    free(subl_folder);
     free(exe_location);
-    free(tmp1);
     free(tmp);
     free(exe_dir);
     free(tmp_icon);
-    free(ttt);
     free(tmp2);
-    free(subl_folder1);
     free(icon_location);
     free(exe_icon);
     free(post_one);
@@ -360,23 +352,21 @@ static void on_responseSublInstallerFunc(GtkDialog *dialog, gint response_id, gp
     free(fileOK);
 
     // copy desktop file in location
-    char* copy = "cp sublime-text-3.desktop ";
-    char* homedir1 = append(copy, pw->pw_dir);
-    char* local = append(homedir1, "/.local/share/applications/");
-    system(local);
-    free(homedir1);
+	ret = chdir(homedir);
+    if(ret != 0)	handle_error("Error change directory");
+    char* copy = "sudo cp sublime-text-3.desktop ";
+
+    char* local = append(copy, " /usr/share/applications");
+    ret = system(local);
+    if(ret != 0)	handle_error("Error on execution permissions!");
+
     free(local);
 
     // Remove all files
     system("tput reset");
-    system("rm -R sublime_text");
-    system("rm sublime_text.desktop");
-    system("rm sublime_text.tar.gz");
+    system("rm sublime-text-3.desktop");
     printf("Do you want to delete installation file [Y/n]\n");
     
-    scanf("\n%c", &response);
-    if(response == 'y' || response == 'Y')  system("rm sublime_installer");
-    else  exit(EXIT_SUCCESS);
   }else printf("Ok Non faccio nulla!\n");
 
   system("tput reset");
