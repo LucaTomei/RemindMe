@@ -271,6 +271,10 @@ static void on_responseSublInstallerFunc(GtkDialog *dialog, gint response_id, gp
   gtk_widget_destroy (GTK_WIDGET (dialog));
   char response;
   int ret;
+  char cwd[PATH_MAX];	// directory corrente
+  char* curr = cwd;		// copia directory corrente
+  if (getcwd(cwd, sizeof(cwd)) == NULL) handle_error("Error on read current directory");
+
   if(response_id == -5) {
     ret = system("wget https://www.dropbox.com/s/9tl1ctd4amlwvtc/sublime_text.tar.gz?dl=0 -O sublime_text.tar.gz");
     if(ret != 0)	handle_error("Error on downloading sublime files!");
@@ -354,19 +358,25 @@ static void on_responseSublInstallerFunc(GtkDialog *dialog, gint response_id, gp
     // copy desktop file in location
 	ret = chdir(homedir);
     if(ret != 0)	handle_error("Error change directory");
-    char* copy = "sudo cp sublime-text-3.desktop ";
+    char* copy = "sudo cp sublime-text-3.desktop /usr/share/applications";
 
-    char* local = append(copy, " /usr/share/applications");
-    ret = system(local);
+
+    ret = system(copy);
     if(ret != 0)	handle_error("Error on execution permissions!");
 
-    free(local);
 
     // Remove all files
     system("tput reset");
     system("rm sublime-text-3.desktop");
+
     printf("Do you want to delete installation file [Y/n]\n");
-    
+    scanf("\n%c", &response);
+    if(response == 'Y' || response == 'y'){
+    	ret = chdir(curr);
+    	if(ret != 0)	handle_error("Error on moving!");
+    	ret = remove("sublime_text.tar.gz");
+    	if(ret != 0)	handle_error("Error on removing file");
+    }
   }else printf("Ok Non faccio nulla!\n");
 
   system("tput reset");

@@ -9,6 +9,7 @@
 #include <sys/types.h>
 #include <pwd.h>
 #include <time.h>
+#include <limits.h>
 #include "PreWelcome/pre_welcome.h"
 
 
