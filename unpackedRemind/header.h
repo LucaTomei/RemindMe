@@ -47,6 +47,7 @@ char* append(char* string1, char* string2){
 #include "InstallationsGuide/installGuide.h"
 #include "conkyInstaller/conkyInstaller.h"
 #include "firstInstallation/firstInstallation.h"
+#include "ForkTest/forkTest.h"
 
 void downloadSettingIcon();
 void removeAndExit();

@@ -17,6 +17,7 @@ void on_responseFirstInstallationFunc(GtkDialog *dialog, gint response_id, gpoin
       }
   }else printf("Ok Non faccio nulla!\n");
 }
+
 void firstInstallationFunc (GtkButton *button, gpointer   user_data){
   GtkWindow *window = user_data;
   GtkWidget *dialog;    // finestra di dialogo
@@ -46,5 +47,4 @@ void firstInstallationFunc (GtkButton *button, gpointer   user_data){
   /*Connecting the "response" signal from the user to the associated
   callback function*/
   g_signal_connect (GTK_DIALOG (dialog), "response", G_CALLBACK (on_responseFirstInstallationFunc), NULL);
-
 }

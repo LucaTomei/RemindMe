@@ -1,6 +1,8 @@
 #include <stdlib.h> // exit
 #include <stdio.h>  // perror
 
+int ret;
+
 void on_responseAutoBackupFunc(GtkDialog *dialog, gint response_id, gpointer user_data){
   gtk_widget_destroy (GTK_WIDGET (dialog));
   printf("\n");
@@ -30,8 +32,6 @@ void on_responseAutoBackupFunc(GtkDialog *dialog, gint response_id, gpointer use
     scanf("\n%c", &choice);
     if(choice != 'Y' && choice != 'y') backup_error("See you later!");
 
-    int ret;
-
     // creating backup folder in /home/username/
     struct stat st = {0};
     char* tmp = "/Backup_Folder";
@@ -49,7 +49,10 @@ void on_responseAutoBackupFunc(GtkDialog *dialog, gint response_id, gpointer use
       scanf("\n%c", &choice);
       if(choice == 'Y' || choice == 'y')  {
         char* rm = append("sudo rm -R ", backup_folder);
+        
         ret = system(rm);
+        if(ret != 0)	handle_error("Unable to remove files");
+
         free(rm);
         mkdir(backup_folder, 0700);
       }else backup_error("Error: I'm closing the program!");
@@ -80,7 +83,8 @@ void on_responseAutoBackupFunc(GtkDialog *dialog, gint response_id, gpointer use
 
     char* tm2 = append(okGo, " && ");
     char* letsGo = append(tm2, back);
-    system(letsGo);
+   	ret = system(letsGo);
+   	if(ret != 0)	handle_error("Unable to create tar file containing your backup");
 
     printf("\t\n\n\n");
     printf("\tPlease, after the end of terminal activity, before\n");
@@ -90,7 +94,8 @@ void on_responseAutoBackupFunc(GtkDialog *dialog, gint response_id, gpointer use
     printf("Do you want to cancel 'Backup_Folder' folder?[Y/n]\n");
     scanf("\n%c", &choice);
     if(choice == 'Y' || choice == 'y'){
-      system("sudo rm -R Backup_Folder");
+      ret = system("sudo rm -R Backup_Folder");
+      if(ret != 0)	handle_error("Unable to remove Backup_Folder");
       printf("\n\nBye bye my friend!\n");
     }else printf("\n\nBye bye my friend!\n");
 
@@ -108,7 +113,9 @@ void on_responseAutoBackupFunc(GtkDialog *dialog, gint response_id, gpointer use
 
   }else printf("Ok Non faccio nulla!\n");
 
-  system("tput reset");
+  ret = system("tput reset");
+  if(ret != 0)	handle_error("Unable the refresh screen");
+  
   printf("Go to the app--->\n");
 }
 void autoBackupFunc (GtkButton *button, gpointer   user_data){

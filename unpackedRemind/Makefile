@@ -6,3 +6,6 @@ CFLAGS2+=`pkg-config --libs gtk+-3.0`
 
 project:
 	$(CC) $(CFLAGS1) $(ProgLocation) -o $(ProgName) $(CFLAGS2)
+
+
+PHONY: $(ProgName) clean & tput reset 

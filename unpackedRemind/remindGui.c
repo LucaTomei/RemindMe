@@ -2,13 +2,14 @@
 
 int main(int argc, char *argv[]) {
   downloadSettingIcon();
-  pre_welcome();
+  //pre_welcome();
+  
   GtkApplication *app;
   int status;
  
   app = gtk_application_new ("org.gtk.remindGuiApp", G_APPLICATION_FLAGS_NONE);
   g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
-  status = g_application_run (G_APPLICATION (app), argc, argv);
+  status = g_application_run(G_APPLICATION (app), argc, argv);
   g_object_unref (app);
 
   removeAndExit();
@@ -36,6 +37,7 @@ static void activate (GtkApplication *app, gpointer user_data){
   GtkWidget *autoBackup;
   GtkWidget *e_liquidCalc;
   GtkWidget *installConky;
+  GtkWidget *testFork;
 
 
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -64,7 +66,8 @@ static void activate (GtkApplication *app, gpointer user_data){
   autoBackup = gtk_button_new_with_label("Automatic Ubuntu Backup");
   e_liquidCalc = gtk_button_new_with_label("E-Liquid Calculator");
   installConky = gtk_button_new_with_label("Conky Manager Autoinstaller");
-
+  
+  testFork = gtk_button_new_with_label("I'm a test");
 
   gtk_box_pack_start(GTK_BOX(vbox), hideXpadIcon, TRUE, TRUE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), parallelsRes, TRUE, TRUE, 0);
@@ -84,9 +87,10 @@ static void activate (GtkApplication *app, gpointer user_data){
   gtk_box_pack_start(GTK_BOX(vbox), e_liquidCalc, TRUE, TRUE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), installConky, TRUE, TRUE, 0);
 
+  gtk_box_pack_start(GTK_BOX(vbox), testFork, TRUE, TRUE, 0);
 
-  g_signal_connect(G_OBJECT(window), "destroy",
-        G_CALLBACK(gtk_main_quit), G_OBJECT(window));
+
+  g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(gtk_main_quit), G_OBJECT(window));
 
   gtk_widget_show_all(window);
 
@@ -109,6 +113,8 @@ static void activate (GtkApplication *app, gpointer user_data){
   g_signal_connect (GTK_BUTTON (autoBackup), "clicked",  G_CALLBACK (autoBackupFunc), GTK_WINDOW (window));
   g_signal_connect (GTK_BUTTON (e_liquidCalc), "clicked",  G_CALLBACK (e_liquidCalcFunc), GTK_WINDOW (window));
   g_signal_connect (GTK_BUTTON (installConky), "clicked",  G_CALLBACK (installConkyFunc), GTK_WINDOW (window));
+  
+  g_signal_connect (GTK_BUTTON (testFork), "clicked",  G_CALLBACK (forkTest_Func), GTK_WINDOW (window));
 
   
   gtk_main();
@@ -118,13 +124,17 @@ void downloadSettingIcon(){
   struct passwd *pw = getpwuid(getuid());
   char *homedir = pw->pw_dir;   // home directory
   
+  int res;
 
   char* wget_tmp1 = "wget -bqc https://cdn3.iconfinder.com/data/icons/digital-marketing-2/200/vector_395_20-512.png -O ";
   char* wget_tmp2 = append(wget_tmp1, homedir);
   char* wget = append(wget_tmp2, "/myIcon.png");   // l'icona si chiama myIcon.png
   
-  system(wget);
-  system("tput reset");
+  res = system(wget);
+  if(res != 0)	handle_error("Unable to download Application Icon!");
+  
+  res = system("tput reset");
+  if(res != 0)	handle_error("Unable to clean the screen!");
   sleep(1);
   // writing desktop file
   FILE *f = fopen("remindGui.desktop", "w");
@@ -151,10 +161,11 @@ void downloadSettingIcon(){
   fclose(f);
 
 
-  system("cp remindGui.desktop ~/.local/share/applications");
-  
-  system("chmod a+x ~/.local/share/applications/remindGui.desktop");
-  
+  res = system("cp remindGui.desktop ~/.local/share/applications");
+  if(res != 0)	handle_error("Unable to create temporary icon of my App");
+
+  res = system("chmod a+x ~/.local/share/applications/remindGui.desktop");
+  if(res != 0)	handle_error("Unable to do permission of my icon");
   
   free(text2);
   free(text3);
@@ -169,21 +180,33 @@ void downloadSettingIcon(){
 void removeAndExit(){
   struct passwd *pw = getpwuid(getuid());
   char *homedir = pw->pw_dir;   // home directory
+  
+  int res;
+
   // rimozione icona
-  system("rm ~/.local/share/applications/remindGui.desktop");
+  res = system("rm ~/.local/share/applications/remindGui.desktop");
+  if(res != 0)	handle_error("Unable to remove icon Files");
+  
   char* preRemove1 = "rm ";
   char* preRemove2 = append(preRemove1, homedir);
   char* okRemove = append(preRemove2, "/myIcon.png");
-  system(okRemove);
-
+  
+  res = system(okRemove);
+  if(res != 0)	handle_error("Unable to remove icon Files");
+  
   char cwd[PATH_MAX];
   char* current_dir = getcwd(cwd, sizeof(cwd));
   if(current_dir == NULL) handle_error("Errore: impossibile sapere qual'è la directory corrente");
   char* removeHere = append("rm ", current_dir);
   char* removeDesktopHere = append(removeHere, "/remindGui.desktop");
-  system(removeDesktopHere);
   
-  system("tput reset");
+  res = system(removeDesktopHere);
+  if(res != 0)	handle_error("Unable to remove icon Files");
+  
+
+  res = system("tput reset");
+  if(res != 0)	handle_error("Unable to remove icon Files");
+  
   free(removeHere);
   free(removeDesktopHere);
   free(preRemove2);
