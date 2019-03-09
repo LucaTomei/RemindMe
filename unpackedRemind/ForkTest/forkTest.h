@@ -22,7 +22,6 @@ void on_response_forkTest(GtkDialog *dialog, gint response_id, gpointer user_dat
 			int res = execvp(cmd[0], cmd);
 		}else if(pid < 0)	handle_error("None");
 		// Il padre non deve fare nulla
-
 	}else printf("Ok Non faccio nulla!\n");
 }
 
