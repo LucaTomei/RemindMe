@@ -27,7 +27,7 @@ void freeMia(){
 int main(int argc, char *argv[]) {
   //downloadSettingIcon();
   installApplication();
-  //  pre_welcome();
+  pre_welcome();
   
   GtkApplication *app;
   int status;
