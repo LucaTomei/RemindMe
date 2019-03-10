@@ -30,8 +30,8 @@ do{\
 
 
 char* append(char* string1, char* string2){
-  size_t dim = (strlen(string1)) + (strlen(string2) + 1);
-  char *tmp = malloc(dim * sizeof(char));
+    size_t dim = (strlen(string1)) + (strlen(string2) + 1);
+    char *tmp = malloc(dim * sizeof(char));
     strcpy(tmp, string1);
     strcat(tmp, string2);
     return tmp;

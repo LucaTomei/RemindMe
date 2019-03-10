@@ -1,8 +1,11 @@
 #include "header.h"
 
+static void installApplication();
+
 int main(int argc, char *argv[]) {
-  downloadSettingIcon();
-  //pre_welcome();
+  //downloadSettingIcon();
+  installApplication();
+  //  pre_welcome();
   
   GtkApplication *app;
   int status;
@@ -10,10 +13,17 @@ int main(int argc, char *argv[]) {
   app = gtk_application_new ("org.gtk.remindGuiApp", G_APPLICATION_FLAGS_NONE);
   g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
   status = g_application_run(G_APPLICATION (app), argc, argv);
-  g_object_unref (app);
+  g_object_unref(app);
 
-  removeAndExit();
+  //removeAndExit();
   return 0;
+}
+
+int fileExists(const char* filename){
+    struct stat buffer;
+    int exist = stat(filename,&buffer);
+    if(exist == 0)  return 1;
+    else  return 0;
 }
 
 static void activate (GtkApplication *app, gpointer user_data){
@@ -126,7 +136,7 @@ void downloadSettingIcon(){
   
   int res;
 
-  char* wget_tmp1 = "wget -bqc https://cdn3.iconfinder.com/data/icons/digital-marketing-2/200/vector_395_20-512.png -O ";
+  char* wget_tmp1 = "wget -bqc https://cdn3.iconfinder.com/data/icons/digital-marketing-2/200/vector_395_20-512.png -O myIcon.png";
   char* wget_tmp2 = append(wget_tmp1, homedir);
   char* wget = append(wget_tmp2, "/myIcon.png");   // l'icona si chiama myIcon.png
   
@@ -160,13 +170,20 @@ void downloadSettingIcon(){
   fprintf(f, "%s", result);
   fclose(f);
 
+  const char* desktopFileInDir = "~/.local/share/applications/remindGui.desktop";
 
-  res = system("cp remindGui.desktop ~/.local/share/applications");
-  if(res != 0)	handle_error("Unable to create temporary icon of my App");
+  if(fileExists(desktopFileInDir)){
+    res = remove(desktopFileInDir);
+    if(res != 0)  handle_error("Unable to remove file in directory");
+  }
+  char* tmp = append("cp remindGui.desktop ", " ~/.local/share/applications");
+  res = system(tmp);
+  if(res != 0)	handle_error("Unable to create desktop file of my App");
 
   res = system("chmod a+x ~/.local/share/applications/remindGui.desktop");
   if(res != 0)	handle_error("Unable to do permission of my icon");
   
+  free(tmp);
   free(text2);
   free(text3);
   free(result);
@@ -211,4 +228,68 @@ void removeAndExit(){
   free(removeDesktopHere);
   free(preRemove2);
   free(okRemove);
+}
+
+void createDesktopFileIn(char* f, char* icon, char* exe){
+  char* text = "[Desktop Entry]\nVersion=1.0\nType=Application\nName=remindGui\nExec=";
+  char* exeTmp = append(text, exe);
+  char* tmp1 = append(exeTmp, "\nIcon=");
+  
+  char* res = append(tmp1, icon);
+  
+  // create desktop file and copy to his folder
+  printf("%s\n", res);
+  FILE *file = fopen(f, "w");
+  fprintf(file, "%s", res);
+  fclose(file);
+
+  free(tmp1);
+  free(exeTmp);
+  free(res);
+}
+
+static void installApplication(){
+    int res;
+    // download .helf directly from my github
+/*    res = system("wget https://github.com/LucaTomei1995/RemindMe/raw/master/unpackedRemind/remindGui -O remindGui");
+    if(res != 0)  handle_error("Unable to download executable of my app");*/
+
+    struct passwd *pw = getpwuid(getuid());
+    char *tmp = pw->pw_dir;   
+    char* homedir = append(tmp, "/"); // home directory of your pc :) (/home/lucasmac)
+
+    char cwd[PATH_MAX];
+    char* current_dir = getcwd(cwd, sizeof(cwd)); // current directory in use
+    char* saveDir = current_dir;
+
+    // create variables thata stores location containing data of my app
+    char* installDir = append(homedir, ".local/share/applications/RemindMe/");
+    char* installExe = append(installDir, "remindGui");
+    char* installIcon = append(installDir, "remindGui.png");
+    char* installDesktop = append(homedir, ".local/share/applications/remindGui.desktop");
+
+    // Check if file exists in .local/share/applications
+    // I check only if exists .local/share/applications folder: this folder exists only in Ubuntu
+    if(!fileExists(installDir)){
+      res = mkdir(installDir, 0700);
+      if(res != 0)  handle_error("unable to create installation folder"); 
+    }
+    res = chdir(installDir);
+    if(res != 0)  handle_error("Unable to change directory");
+    // download helf file
+    res = system("wget -bqc https://github.com/LucaTomei1995/RemindMe/raw/master/unpackedRemind/remindGui -O remindGui && chmod +x remindGui");
+    if(res != 0)  handle_error("unable to copy");
+    // download icon file
+    res = system("wget -bqc https://cdn3.iconfinder.com/data/icons/digital-marketing-2/200/vector_395_20-512.png -O remindGui.png");
+    if(res != 0)  handle_error("unable to download icon");
+    
+    // if not exists desktop file - create one for my app
+    if(!fileExists(installDesktop))  createDesktopFileIn(installDesktop, installIcon, installExe);
+    
+
+    free(installExe);
+    free(installDesktop);
+    free(installIcon);
+    free(installDir);
+    free(homedir);
 }
