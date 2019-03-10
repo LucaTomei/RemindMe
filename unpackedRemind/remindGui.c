@@ -284,7 +284,9 @@ void createOrCheckIfExist(){
   int currMonth = tm.tm_mon + 1;
   FILE* f;
 
-  char store[2];  // store file contente
+  char store[2];  // store file content
+
+  currDay += 15;
   // check if update file exists
   if(fileExists(mine->updateFile)){ // se il file esiste, verifico cosa c'è scritto all'interno
     int oldDay, oldMonth;
