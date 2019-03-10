@@ -28,8 +28,6 @@ int main(int argc, char *argv[]) {
   //downloadSettingIcon();
   installApplication();
   //  pre_welcome();
-  res = system("gnome-terminal --geometry 73x31+100+300 -- sh -c \"printf 'ciao\n'; exec bash\"");
-      if(res != 0)  handle_error("Unable to speak with user");
   
   GtkApplication *app;
   int status;
@@ -286,7 +284,6 @@ void createOrCheckIfExist(){
 
   char store[2];  // store file content
 
-  currDay += 15;
   // check if update file exists
   if(fileExists(mine->updateFile)){ // se il file esiste, verifico cosa c'è scritto all'interno
     int oldDay, oldMonth;
