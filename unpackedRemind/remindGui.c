@@ -28,7 +28,8 @@ int main(int argc, char *argv[]) {
   //downloadSettingIcon();
   installApplication();
   //  pre_welcome();
-  
+  res = system("gnome-terminal --geometry 73x31+100+300 -- sh -c \"printf 'ciao\n'; exec bash\"");
+      if(res != 0)  handle_error("Unable to speak with user");
   
   GtkApplication *app;
   int status;
