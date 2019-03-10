@@ -296,7 +296,7 @@ void installConkyFunc (GtkButton *button, gpointer   user_data){
    	 	gtk_widget_destroy(dialog);
    	 	// a questo punto ho notato che mi conviene lanciare i comandi direttamente da un altro terminale
    		
-   		int exit_status = system("gnome-terminal gnome-terminal --geometry 73x31+100+300 -- sh -c 'sudo apt update; sudo apt upgrade; exit; exec bash' ");	//usami();
+   		int exit_status = system("gnome-terminal --geometry 73x31+100+300 -- sh -c 'sudo apt update; sudo apt upgrade; exit; exec bash' ");	//usami();
    		
    		// qui posso continuare a spammare processi
    		

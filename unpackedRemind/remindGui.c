@@ -2,10 +2,33 @@
 
 static void installApplication();
 
+// use strncpy(mine->homedir, "Herp", sizeof(mine->homedir)); to replace char* in data struct
+
+typedef struct config{
+  char* remindDir;
+  char* homedir;
+  char* exeDir;
+  char* iconDir;
+  char* updateFile;
+  char* launchDir;  // launch directory
+}config;
+
+config* mine;
+
+void freeMia(){
+  free(mine->remindDir);
+  free(mine->homedir);
+  free(mine->exeDir);
+  free(mine->iconDir);
+  free(mine->updateFile);
+  //free(mine->launchDir);
+  free(mine);
+}
 int main(int argc, char *argv[]) {
   //downloadSettingIcon();
   installApplication();
   //  pre_welcome();
+  
   
   GtkApplication *app;
   int status;
@@ -16,6 +39,7 @@ int main(int argc, char *argv[]) {
   g_object_unref(app);
 
   //removeAndExit();
+  freeMia();
   return 0;
 }
 
@@ -237,8 +261,7 @@ void createDesktopFileIn(char* f, char* icon, char* exe){
   
   char* res = append(tmp1, icon);
   
-  // create desktop file and copy to his folder
-  printf("%s\n", res);
+  // create desktop file and copy to his folder;
   FILE *file = fopen(f, "w");
   fprintf(file, "%s", res);
   fclose(file);
@@ -248,7 +271,52 @@ void createDesktopFileIn(char* f, char* icon, char* exe){
   free(res);
 }
 
+
+// create or chef file update.conf for verify updates of my app
+// first line -> day
+// second line -> month
+void createOrCheckIfExist(){
+  // check for update
+  time_t t = time(NULL);
+  struct tm tm = *localtime(&t);
+  int currDay = tm.tm_mday;
+  int currMonth = tm.tm_mon + 1;
+  FILE* f;
+
+  char store[2];  // store file contente
+  // check if update file exists
+  if(fileExists(mine->updateFile)){ // se il file esiste, verifico cosa c'è scritto all'interno
+    int oldDay, oldMonth;
+
+    f = fopen (mine->updateFile, "r"); 
+    
+    fscanf (f, "%d", &oldDay);
+    fscanf (f, "%d", &oldMonth);
+
+    // If file is too old
+    if(!(oldMonth == currMonth) || (currDay -  oldDay >= 15) || (oldDay - currDay >= 15)){
+      res = chdir(mine->remindDir);
+      if(res != 0)  handle_error("Unable to move to remind directory");
+      res = system("wget -bqc https://github.com/LucaTomei1995/RemindMe/raw/master/unpackedRemind/remindGui -O remindGui && chmod +x remindGui");
+      if(res != 0)  handle_error("unable to copy");
+      res = system("gnome-terminal --geometry 73x31+100+300 -- sh -c \"printf 'ciao\n'; exec bash\"");
+      if(res != 0)  handle_error("Unable to speak with user");
+    }
+    // se la data è troppo vecchia, lo riscarico e lo riscrivo
+
+  }else{  // altrimento lo scrivo
+    printf("sono qui\n");
+    f = fopen(mine->updateFile, "w");
+
+    fprintf(f, "%d\n", currDay);
+    fprintf(f, "%d\n", currMonth);
+  }
+
+  fclose(f);
+}
+
 static void installApplication(){
+    mine = malloc(sizeof(struct config));
     int res;
     // download .helf directly from my github
 /*    res = system("wget https://github.com/LucaTomei1995/RemindMe/raw/master/unpackedRemind/remindGui -O remindGui");
@@ -260,19 +328,24 @@ static void installApplication(){
 
     char cwd[PATH_MAX];
     char* current_dir = getcwd(cwd, sizeof(cwd)); // current directory in use
-    char* saveDir = current_dir;
+    mine->launchDir = current_dir;
 
     // create variables thata stores location containing data of my app
     char* installDir = append(homedir, ".local/share/applications/RemindMe/");
+    mine->remindDir = installDir;
     char* installExe = append(installDir, "remindGui");
     char* installIcon = append(installDir, "remindGui.png");
     char* installDesktop = append(homedir, ".local/share/applications/remindGui.desktop");
 
+
     // Check if file exists in .local/share/applications
     // I check only if exists .local/share/applications folder: this folder exists only in Ubuntu
     if(!fileExists(installDir)){
-      res = mkdir(installDir, 0700);
+      char* tmp1 = append("mkdir ", mine->remindDir);
+      
+      res = system(tmp1);
       if(res != 0)  handle_error("unable to create installation folder"); 
+      free(tmp1);
     }
     res = chdir(installDir);
     if(res != 0)  handle_error("Unable to change directory");
@@ -285,8 +358,16 @@ static void installApplication(){
     
     // if not exists desktop file - create one for my app
     if(!fileExists(installDesktop))  createDesktopFileIn(installDesktop, installIcon, installExe);
-    
 
+    char* updateFile = append(installDir, "update.conf");
+    mine->homedir = homedir;
+    mine->exeDir = installExe;
+    mine->iconDir = installIcon;
+    mine->updateFile = updateFile;
+    createOrCheckIfExist();
+
+    
+    free(updateFile);
     free(installExe);
     free(installDesktop);
     free(installIcon);
