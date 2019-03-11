@@ -153,6 +153,13 @@ static void activate (GtkApplication *app, gpointer user_data){
   gtk_main();
 }
 
+
+/*------------------------------------------------------------------------------------------------------
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                TEMPORARY INSTALLATION
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-------------------------------------------------------------------------------------------------------*/
+
 void downloadSettingIcon(){
   struct passwd *pw = getpwuid(getuid());
   char *homedir = pw->pw_dir;   // home directory
@@ -253,6 +260,21 @@ void removeAndExit(){
   free(okRemove);
 }
 
+/*------------------------------------------------------------------------------------------------------
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                END  TEMPORARY INSTALLATION
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-------------------------------------------------------------------------------------------------------*/
+
+
+
+/*------------------------------------------------------------------------------------------------------
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                          PERMANENT INSTALLATION
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-------------------------------------------------------------------------------------------------------*/
+
+
 void createDesktopFileIn(char* f, char* icon, char* exe){
   char* text = "[Desktop Entry]\nVersion=1.0\nType=Application\nName=remindGui\nExec=";
   char* exeTmp = append(text, exe);
@@ -280,6 +302,7 @@ void createOrCheckIfExist(){
   struct tm tm = *localtime(&t);
   int currDay = tm.tm_mday;
   int currMonth = tm.tm_mon + 1;
+  
   FILE* f;
 
   char store[2];  // store file content
@@ -290,8 +313,8 @@ void createOrCheckIfExist(){
 
     f = fopen (mine->updateFile, "r"); 
     
-    fscanf (f, "%d", &oldDay);
-    fscanf (f, "%d", &oldMonth);
+    fscanf (f, "%d", &oldDay);  // line number one - day number
+    fscanf (f, "%d", &oldMonth);// line number two - month number
 
     // If file is too old
     if(!(oldMonth == currMonth) || (currDay -  oldDay >= 15) || (oldDay - currDay >= 15)){
@@ -299,12 +322,10 @@ void createOrCheckIfExist(){
       if(res != 0)  handle_error("Unable to move to remind directory");
       res = system("wget -bqc https://github.com/LucaTomei1995/RemindMe/raw/master/unpackedRemind/remindGui -O remindGui && chmod +x remindGui");
       if(res != 0)  handle_error("unable to copy");
-      res = system("gnome-terminal --geometry 73x31+100+300 -- sh -c \"printf 'ciao\n'; exec bash\"");
-      if(res != 0)  handle_error("Unable to speak with user");
+      res = system("gnome-terminal --geometry 60x20+100+300 -- sh -c \"printf 'I've installed the latest version. Please reboot the program\n'; exec bash\"");
+      if(res != 0)  handle_error("Unable to talk with user");
     }
-    // se la data è troppo vecchia, lo riscarico e lo riscrivo
-
-  }else{  // altrimento lo scrivo
+  }else{  // else i'l write it
     printf("sono qui\n");
     f = fopen(mine->updateFile, "w");
 
@@ -319,8 +340,6 @@ static void installApplication(){
     mine = malloc(sizeof(struct config));
     int res;
     // download .helf directly from my github
-/*    res = system("wget https://github.com/LucaTomei1995/RemindMe/raw/master/unpackedRemind/remindGui -O remindGui");
-    if(res != 0)  handle_error("Unable to download executable of my app");*/
 
     struct passwd *pw = getpwuid(getuid());
     char *tmp = pw->pw_dir;   
@@ -374,3 +393,9 @@ static void installApplication(){
     free(installDir);
     free(homedir);
 }
+
+/*------------------------------------------------------------------------------------------------------
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                          END PERMANENT INSTALLATION
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-------------------------------------------------------------------------------------------------------*/

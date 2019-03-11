@@ -241,9 +241,6 @@ ${top_mem name 5} $alignr ${top_mem mem_res 5}\n";
 	//gtk_widget_destroy (GTK_WIDGET (dialog));
 }
 
-void usami(){
-	system("sudo apt update");
-}
 
 void installConkyFunc (GtkButton *button, gpointer   user_data){
   /*GtkWindow *window = user_data;
@@ -296,8 +293,8 @@ void installConkyFunc (GtkButton *button, gpointer   user_data){
    	 	gtk_widget_destroy(dialog);
    	 	// a questo punto ho notato che mi conviene lanciare i comandi direttamente da un altro terminale
    		
-   		int exit_status = system("gnome-terminal --geometry 73x31+100+300 -- sh -c 'sudo apt update; sudo apt upgrade; exit; exec bash' ");	//usami();
-   		
+   		int exit_status = system("gnome-terminal --geometry 73x31+100+300 -- sh -c 'sudo apt update; sudo apt upgrade; exit; exec bash' ");	
+   		if(exit_status != 0)	handle_error("Unable to launch terminal");
    		// qui posso continuare a spammare processi
    		
    	}
