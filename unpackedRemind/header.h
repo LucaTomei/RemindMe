@@ -28,6 +28,16 @@ do{\
   exit(EXIT_FAILURE);\
 }while(0)
 
+typedef struct config{
+  char* remindDir;
+  char* homedir;
+  char* exeDir;
+  char* iconDir;
+  char* updateFile;
+  char* launchDir;  // launch directory
+}config;
+
+config* mine;
 
 char* append(char* string1, char* string2){
     size_t dim = (strlen(string1)) + (strlen(string2) + 1);
@@ -36,6 +46,8 @@ char* append(char* string1, char* string2){
     strcat(tmp, string2);
     return tmp;
 }
+
+
 
 #include "PreWelcome/pre_welcome.h"
 #include "E_liquid/eliquid.h"

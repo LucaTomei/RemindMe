@@ -4,16 +4,11 @@ static void installApplication();
 
 // use strncpy(mine->homedir, "Herp", sizeof(mine->homedir)); to replace char* in data struct
 
-typedef struct config{
-  char* remindDir;
-  char* homedir;
-  char* exeDir;
-  char* iconDir;
-  char* updateFile;
-  char* launchDir;  // launch directory
-}config;
 
-config* mine;
+extern config* mine;
+
+int res;
+
 
 void freeMia(){
   free(mine->remindDir);
@@ -21,13 +16,13 @@ void freeMia(){
   free(mine->exeDir);
   free(mine->iconDir);
   free(mine->updateFile);
-  //free(mine->launchDir);
+  free(mine->launchDir);
   free(mine);
 }
 int main(int argc, char *argv[]) {
   //downloadSettingIcon();
   installApplication();
-  pre_welcome();
+  //pre_welcome();
   
   GtkApplication *app;
   int status;
@@ -337,7 +332,9 @@ void createOrCheckIfExist(){
 }
 
 static void installApplication(){
-    mine = malloc(sizeof(struct config));
+    
+    mine = malloc((8*6)*sizeof(struct config));
+
     int res;
     // download .helf directly from my github
 
@@ -345,8 +342,12 @@ static void installApplication(){
     char *tmp = pw->pw_dir;   
     char* homedir = append(tmp, "/"); // home directory of your pc :) (/home/lucasmac)
 
-    char cwd[PATH_MAX];
-    char* current_dir = getcwd(cwd, sizeof(cwd)); // current directory in use
+    /*char cwd[256];
+    char* current_dir = getcwd(cwd, sizeof(cwd)); */// current directory in use
+    
+    char * current_dir = getcwd(NULL, 0);
+    
+    mine->launchDir = malloc(strlen(current_dir) + 1);
     mine->launchDir = current_dir;
 
     // create variables thata stores location containing data of my app
