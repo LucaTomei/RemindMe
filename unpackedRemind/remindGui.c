@@ -10,13 +10,13 @@ extern config* mine;
 int res;
 
 
-void freeMia(){
-  free(mine->remindDir);
-  free(mine->homedir);
-  free(mine->exeDir);
-  free(mine->iconDir);
-  free(mine->updateFile);
-  free(mine->launchDir);
+void freeMia(){ 
+  free(mine->remindDir);  // .local/share/application/RemindMe
+  free(mine->homedir);    // home dir of your pc
+  free(mine->exeDir);     // where is the exe
+  free(mine->iconDir);    // where is the icon
+  free(mine->updateFile); // where is the update.conf
+  free(mine->launchDir);  // where do you have launched this program
   free(mine);
 }
 int main(int argc, char *argv[]) {
@@ -380,6 +380,8 @@ static void installApplication(){
     if(!fileExists(installDesktop))  createDesktopFileIn(installDesktop, installIcon, installExe);
 
     char* updateFile = append(installDir, "update.conf");
+    mine->homedir = malloc(strlen(homedir) + 1);
+    
     mine->homedir = homedir;
     mine->exeDir = installExe;
     mine->iconDir = installIcon;
