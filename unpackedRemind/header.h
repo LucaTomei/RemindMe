@@ -47,6 +47,16 @@ char* append(char* string1, char* string2){
     return tmp;
 }
 
+void printaTest(){
+    printf("Home directory ---> %s\n", mine->homedir);
+    printf("Launching Directory ---> %s\n", mine->launchDir);
+    printf("RemindMe directory ----> %s\n", mine->remindDir);
+    printf("Executable directory ---> %s\n", mine->exeDir);
+    printf("Update file in directory ----> %s\n", mine->updateFile);
+    printf("Icon File in directory ---> %s\n", mine->iconDir);
+    exit(0);
+}
+
 
 
 #include "PreWelcome/pre_welcome.h"

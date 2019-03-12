@@ -380,7 +380,6 @@ static void installApplication(){
     
     // if not exists desktop file - create one for my app
     if(!fileExists(installDesktop))  createDesktopFileIn(installDesktop, mine->iconDir, mine->exeDir);
- 
     
     createOrCheckIfExist();
     
