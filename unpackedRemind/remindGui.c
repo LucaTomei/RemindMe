@@ -336,27 +336,35 @@ static void installApplication(){
     mine = malloc((8*6)*sizeof(struct config));
 
     int res;
+    
     // download .helf directly from my github
-
     struct passwd *pw = getpwuid(getuid());
     char *tmp = pw->pw_dir;   
     char* homedir = append(tmp, "/"); // home directory of your pc :) (/home/lucasmac)
 
-    /*char cwd[256];
-    char* current_dir = getcwd(cwd, sizeof(cwd)); */// current directory in use
+    
+    mine->homedir = append(tmp, "/");
     
     char * current_dir = getcwd(NULL, 0);
     
-    mine->launchDir = malloc(strlen(current_dir) + 1);
-    mine->launchDir = current_dir;
+    
+    mine->launchDir = append(current_dir, "/");
+    /*printf("%s\n", mine->launchDir);
+    handle_error("exit successfull");*/
 
     // create variables thata stores location containing data of my app
     char* installDir = append(homedir, ".local/share/applications/RemindMe/");
-    mine->remindDir = installDir;
-    char* installExe = append(installDir, "remindGui");
-    char* installIcon = append(installDir, "remindGui.png");
+    mine->remindDir = append(homedir, ".local/share/applications/RemindMe/");
+    char* installExe = append(mine->remindDir, "remindGui");
+    mine->exeDir = append(mine->remindDir, "remindGui");
+    char* installIcon = append(mine->remindDir, "remindGui.png");
+    mine->iconDir = append(mine->remindDir, "remindDir.png");
     char* installDesktop = append(homedir, ".local/share/applications/remindGui.desktop");
 
+
+    
+    
+    mine->updateFile = append(mine->remindDir, "update.conf");
 
     // Check if file exists in .local/share/applications
     // I check only if exists .local/share/applications folder: this folder exists only in Ubuntu
@@ -380,12 +388,10 @@ static void installApplication(){
     if(!fileExists(installDesktop))  createDesktopFileIn(installDesktop, installIcon, installExe);
 
     char* updateFile = append(installDir, "update.conf");
-    mine->homedir = malloc(strlen(homedir) + 1);
     
-    mine->homedir = homedir;
-    mine->exeDir = installExe;
-    mine->iconDir = installIcon;
-    mine->updateFile = updateFile;
+    
+    
+    
     createOrCheckIfExist();
 
     
