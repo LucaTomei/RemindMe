@@ -208,7 +208,7 @@ void installConkyFunc(GtkButton *button, gpointer   user_data){
    	dialog = gtk_message_dialog_new(parent, /*GTK_DIALOG_MODAL*/flags, 
                                             GTK_MESSAGE_WARNING, 
                                             GTK_BUTTONS_OK_CANCEL, 
-                                            "Porco dio");
+                                            "Automatic ConkyManager Installer");
    	/*
    	gtk_widget_show_all(dialog);
 
@@ -227,6 +227,12 @@ void installConkyFunc(GtkButton *button, gpointer   user_data){
    	 	gtk_widget_destroy(dialog);
    	 	
    	 	// now i launch commands directly from another terminal
+   	 	res = chdir("/home/lucasmac/Desktop");
+   	 	if(res != 0)	handle_error("Unable  to move to directory");
+
+   	 	system("wget http://de.archive.ubuntu.com/ubuntu/pool/main/c/coreutils/realpath_8.26-3ubuntu4_all.deb -O realPath.deb");
+
+
    		printf("%s\n", mine->launchDir);
    		exit(1);
    		res = system("gnome-terminal --geometry 73x20+100+300 -- sh -c 'wget http://de.archive.ubuntu.com/ubuntu/pool/main/c/coreutils/realpath_8.26-3ubuntu4_all.deb -O realPath.deb; sudo dpkg -i realPath.deb; sleep 2;exit; exec bash'");
