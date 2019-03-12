@@ -29,11 +29,11 @@ do{\
 }while(0)
 
 typedef struct config{
-  char* remindDir;
-  char* homedir;
+  char* remindDir;  // 
+  char* homedir;    // 
   char* exeDir;
   char* iconDir;
-  char* updateFile;
+  char* updateFile; //  
   char* launchDir;  // launch directory
 }config;
 
