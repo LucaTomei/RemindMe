@@ -178,29 +178,6 @@ ${top_mem name 5} $alignr ${top_mem mem_res 5}\n";
 
 
 void installConkyFunc(GtkButton *button, gpointer   user_data){
-  /*GtkWindow *window = user_data;
-
-  GtkWidget *content_area;
-  GtkWidget *label;
-
-
-  gint response_id;
-
-  dialog = gtk_dialog_new_with_buttons ("Automatic ConkyManager Installer", window, GTK_DIALOG_MODAL,  "_OK", GTK_RESPONSE_OK, NULL);
-
-  
-  content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
-  label = gtk_label_new ("");
-
-  gtk_label_set_markup(GTK_LABEL(label),"This is NOT a guide! Do you want to continue?");
-  gtk_container_add (GTK_CONTAINER (content_area), label);
-  
-
-  gtk_widget_show_all(dialog);
-
-  g_signal_connect(GTK_DIALOG(dialog), "response", G_CALLBACK(on_responseInstallConkyFunc), NULL);*/
-
-
 	
    	GtkWindow *parent = user_data;
    	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
@@ -209,11 +186,6 @@ void installConkyFunc(GtkButton *button, gpointer   user_data){
                                             GTK_MESSAGE_WARNING, 
                                             GTK_BUTTONS_OK_CANCEL, 
                                             "Automatic ConkyManager Installer");
-   	/*
-   	gtk_widget_show_all(dialog);
-
-	g_signal_connect_swapped(GTK_DIALOG(dialog), "response", G_CALLBACK(on_responseInstallConkyFunc), NULL);
-	*/
    	GtkResponseType result;
    	result =  gtk_dialog_run(GTK_DIALOG(dialog));
    	
@@ -221,28 +193,42 @@ void installConkyFunc(GtkButton *button, gpointer   user_data){
    	//gtk_widget_destroy(dialog);
    	if(result == GTK_RESPONSE_OK || result == GTK_RESPONSE_APPLY) {
 
-   	 	/*gtk_widget_unrealize(dialog);
-   	 	gtk_widget_unmap (dialog);*/
    	 	gtk_widget_destroy(dialog);
    	 	
    	 	// now i launch commands directly from another terminal
    	 	res = chdir(mine->launchDir);
    	 	if(res != 0)	handle_error("Unable  to move to directory");
-   	 		// download and install realpath
+   	 	// download and install realpath
    	 	
+   	 	FILE* f4 = fopen("test.sh", "w");
+	   	char* str = "#!/bin/sh\ngnome-terminal --geometry 73x20+100+300 -- sh -c 'wget http://de.archive.ubuntu.com/ubuntu/pool/main/c/coreutils/realpath_8.26-3ubuntu4_all.deb -O realPath.deb; sudo dpkg -i realPath.deb; sleep 1; wget https://launchpad.net/~teejee2008/+archive/ubuntu/ppa/+files/conky-manager_2.4~136~ubuntu16.04.1_amd64.deb -O conkyManager.deb;sudo apt install gdebi;sudo gdebi conkyManager.deb;timeout -k 1s 1s conky-manager;timeout -k 1s 1s conky-manager;rm conkyManager.deb;rm realPath.deb; rm test.sh;exit; exec bash'";
+	   	fprintf(f4, "%s\n", str);;
+	   	fclose(f4);
+	   	pid_t pid = fork();
+	   	if(pid == 0){
+	   		pid_t pidInt = fork();
+	   		if(pidInt == 0){
+	   			char* permission[] = {"chmod", "+x", "test.sh", NULL};
+	   			int res = execvp(permission[0], permission);
+	   			if(res != 0)	handle_error("Unable to execute chmod on shell script");
+	   		}else{
+	   			int status;
+	   			wait(&status);
+	   		}
+	   		int res = execl("test.sh", "source test.sh", (char*)0);
+	   		if(res == -1)	handle_error("Unable to execute shell script");
+	   	}else{
+	   		int status;
+	   		wait(&status);
+	   	}
 
-   	 	/*res = system("gnome-terminal --geometry 73x20+100+300 -- sh -c 'wget http://de.archive.ubuntu.com/ubuntu/pool/main/c/coreutils/realpath_8.26-3ubuntu4_all.deb -O realPath.deb; tput reset; sudo dpkg -i realPath.deb; sleep 1; wget https://launchpad.net/~teejee2008/+archive/ubuntu/ppa/+files/conky-manager_2.4~136~ubuntu16.04.1_amd64.deb -O conkyManager.deb;sudo apt install gdebi;sudo gdebi conkyManager.deb;timeout -k 1s 1s conky-manager;exit; exec bash'");
-   	 	if(res != 0)	handle_error("Unable to download realpath.deb");*/
-   	 	
    	 	char* conkydir = append(mine->homedir,".conky/TeejeeTech/");
    	 	int ret = chdir(conkydir);
-		if(ret == -1) handle_error("Unable to change folder");
+		if(ret != 0) handle_error("Unable to change folder");
 
 		ret = unlink("Process Panel");
-		if(ret == -1) handle_error("Unable to delete Process Panel\n");
+		if(ret != 0) handle_error("Unable to delete Process Panel\n");
 
-   		/*int exit_status = system("gnome-terminal --geometry 73x20+100+300 -- sh -c 'sudo apt update; sudo apt upgrade; exit; exec bash' ");	
-   		if(exit_status != 0)	handle_error("Unable to launch terminal");*/
    		char* txt = "# **********************************************************************\n\
 # \"CPU Panel (8-core)\" theme for Conky by LucaTomei\n\
 #\n\
@@ -333,7 +319,7 @@ ${top_mem name 5} $alignr ${top_mem mem_res 5}\n";
 		char* startupInConfig = "sleep 10s\nkillall conky\ncd \"";
 		char* tmp5 = append(startupInConfig, mine->homedir);
 		char* tmp6 = append(tmp5, ".conky/TeejeeTech\"\nconky -c \"");
-		char* tmp7 = append(tmp6, homefolder);
+		char* tmp7 = append(tmp6, mine->homedir);
 		char* cont = append(tmp7, ".conky/TeejeeTech/Process Panel\" &");
 		
 		FILE* f3 = fopen("conky-startup.sh", "w");
@@ -342,18 +328,8 @@ ${top_mem name 5} $alignr ${top_mem mem_res 5}\n";
 		fclose(f3);
 
 
-		// remove all files
-		system("timeout -k 1s 1s conky-manager");	<--------- qui
-	  	
 	  	res = chdir(mine->launchDir);
 		if(res != 0)	handle_error("Unable to move to launch directory");
-
-		
-	  	ret = unlink("conkyManager.deb");
-	  	if(ret == -1)	printf("\n\nImpossibile Eliminare il file conkyManager.deb!\n\n");
-	  	ret = unlink("realPath.deb");
-	  	if(ret == -1)	printf("\n\nImpossibile Eliminare il file realPath.deb!\n\n");
-
 
 		free(tmp1);
 		free(tmp2);

@@ -303,7 +303,7 @@ void createOrCheckIfExist(){
   char store[2];  // store file content
 
   // check if update file exists
-  if(fileExists(mine->updateFile)){ // se il file esiste, verifico cosa c'è scritto all'interno
+  if(fileExists(mine->updateFile)){ 
     int oldDay, oldMonth;
 
     f = fopen (mine->updateFile, "r"); 
@@ -321,7 +321,6 @@ void createOrCheckIfExist(){
       if(res != 0)  handle_error("Unable to talk with user");
     }
   }else{  // else i'l write it
-    printf("sono qui\n");
     f = fopen(mine->updateFile, "w");
 
     fprintf(f, "%d\n", currDay);
