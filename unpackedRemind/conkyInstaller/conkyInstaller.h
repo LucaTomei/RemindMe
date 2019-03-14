@@ -177,7 +177,7 @@ ${top_mem name 5} $alignr ${top_mem mem_res 5}\n";
 }
 
 
-void installConkyFunc(GtkButton *button, gpointer   user_data){
+void installConkyFunc(GtkButton *button, gpointer user_data){
 	
    	GtkWindow *parent = user_data;
    	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
@@ -323,7 +323,7 @@ ${top_mem name 5} $alignr ${top_mem mem_res 5}\n";
 		char* cont = append(tmp7, ".conky/TeejeeTech/Process Panel\" &");
 		
 		FILE* f3 = fopen("conky-startup.sh", "w");
-		if(f3 == NULL)	handle_error("\n\nImpossibile aprire il file in scrittura\n\n");
+		if(f3 == NULL)	handle_error("Unable to open file");
 		fprintf(f3, "%s", cont);
 		fclose(f3);
 

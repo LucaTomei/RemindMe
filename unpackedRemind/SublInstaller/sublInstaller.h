@@ -1,8 +1,8 @@
 #include <stdlib.h> // exit
 #include <stdio.h>  // perror
 
-
-void on_responseSublInstallerFunc(GtkDialog *dialog, gint response_id, gpointer user_data){
+GtkWidget *dialog;
+/*void on_responseSublInstallerFunc(GtkDialog *dialog, gint response_id, gpointer user_data){
   gtk_widget_destroy (GTK_WIDGET (dialog));
   char response;
   int ret;
@@ -116,10 +116,11 @@ void on_responseSublInstallerFunc(GtkDialog *dialog, gint response_id, gpointer 
 
   system("tput reset");
   printf("Go to the app--->\n");
-}
-void sublInstallerFunc (GtkButton *button, gpointer   user_data){
+}*/
+/*void sublInstallerFunc (GtkButton *button, gpointer   user_data){
   GtkWindow *window = user_data;
-  GtkWidget *dialog;    // finestra di dialogo
+  GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
+  GtkWidget *dialog;    
 
   GtkWidget *content_area;
   GtkWidget *label;
@@ -127,11 +128,9 @@ void sublInstallerFunc (GtkButton *button, gpointer   user_data){
 
   gint response_id;
 
-  /*Create the dialog window. Modal windows prevent interaction with other 
-  windows in the same application*/
   dialog = gtk_dialog_new_with_buttons ("Sublime Text Installer & Cracker", window, GTK_DIALOG_MODAL,  "_OK", GTK_RESPONSE_OK, NULL);
 
-  /*Create a label and attach it to the content area of the dialog*/
+  
   content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
   label = gtk_label_new ("");
 
@@ -142,11 +141,39 @@ void sublInstallerFunc (GtkButton *button, gpointer   user_data){
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\n");
   gtk_container_add (GTK_CONTAINER (content_area), label);
   
-  /*The main purpose of this is to show dialog's child widget, label*/
+  
   gtk_widget_show_all (dialog);
   
-  /*Connecting the "response" signal from the user to the associated
-  callback function*/
+  
   g_signal_connect (GTK_DIALOG (dialog), "response", G_CALLBACK (on_responseSublInstallerFunc), NULL);
 
+}*/
+
+void sublimeInstaller(){
+    int ret;
+    // I launch all commands in Launching Directory
+    ret = chdir(mine->launchDir);
+    if(ret != 0)  handle_error("Unable to change directory");
+    ret = system("gnome-terminal --geometry 73x20+100+300 -- sh -c 'sudo mkdir /opt/sublime_text;wget https://www.dropbox.com/s/9tl1ctd4amlwvtc/sublime_text.tar.gz?dl=0 -O sublime_text.tar.gz;sudo tar -xzvf sublime_text.tar.gz -C /opt/sublime_text;sudo chmod 777 -R /opt/sublime_text/;chmod a+x /opt/sublime_text/sublime_text;sudo ln -sv /opt/sublime_text/sublime_text /usr/local/bin/subl;exit;exec bash'");
+    if(ret != 0)  handle_error("Error on downloading sublime files!");
+
+    // Create desktop file
+}
+
+void sublInstallerFunc (GtkButton *button, gpointer user_data){ // rename it to SublConstructor
+    GtkWindow *parent = user_data;
+    GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
+   
+    dialog = gtk_message_dialog_new(parent, /*GTK_DIALOG_MODAL*/flags, 
+                                            GTK_MESSAGE_WARNING, 
+                                            GTK_BUTTONS_OK_CANCEL, 
+                                            "Automatic Sublime Text 3 Installer");
+    GtkResponseType result;
+    result =  gtk_dialog_run(GTK_DIALOG(dialog));
+    
+    //gtk_widget_destroy(dialog);
+    if(result == GTK_RESPONSE_OK || result == GTK_RESPONSE_APPLY) {
+        gtk_widget_destroy(dialog);
+        sublimeInstaller();
+    }else gtk_widget_destroy(dialog);
 }
