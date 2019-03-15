@@ -10,19 +10,10 @@ extern config* mine;
 int res;
 
 
-void freeMia(){ 
-  free(mine->remindDir);  // .local/share/application/RemindMe
-  free(mine->homedir);    // home dir of your pc
-  free(mine->exeDir);     // where is the exe
-  free(mine->iconDir);    // where is the icon
-  free(mine->updateFile); // where is the update.conf
-  free(mine->launchDir);  // where do you have launched this program
-  free(mine);
-}
 int main(int argc, char *argv[]) {
   //downloadSettingIcon();
   installApplication();
-  //pre_welcome();
+  pre_welcome();
   
   GtkApplication *app;
   int status;

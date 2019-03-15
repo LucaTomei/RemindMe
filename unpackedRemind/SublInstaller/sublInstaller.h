@@ -42,7 +42,7 @@ GtkWidget *dialog;
     }
     response = '\0';
     // Create desktop file in home directory
-	ret = chdir(homedir);
+	  ret = chdir(homedir);
     if(ret != 0)	handle_error("Error change directory");
     FILE *f = fopen("sublime-text-3.desktop", "w");
     if(f == NULL) handle_error("\n\nImpossibile creare il file in scrittura\n\n");
@@ -154,10 +154,63 @@ void sublimeInstaller(){
     // I launch all commands in Launching Directory
     ret = chdir(mine->launchDir);
     if(ret != 0)  handle_error("Unable to change directory");
-    ret = system("gnome-terminal --geometry 73x20+100+300 -- sh -c 'sudo mkdir /opt/sublime_text;wget https://www.dropbox.com/s/9tl1ctd4amlwvtc/sublime_text.tar.gz?dl=0 -O sublime_text.tar.gz;sudo tar -xzvf sublime_text.tar.gz -C /opt/sublime_text;sudo chmod 777 -R /opt/sublime_text/;chmod a+x /opt/sublime_text/sublime_text;sudo ln -sv /opt/sublime_text/sublime_text /usr/local/bin/subl;exit;exec bash'");
-    if(ret != 0)  handle_error("Error on downloading sublime files!");
-
+    
+    
     // Create desktop file
+    FILE *f = fopen("sublime-text-3.desktop", "w");
+    if(f == NULL) handle_error("\n\nImpossibile creare il file in scrittura\n\n");
+
+    char* init_test = "[Desktop Entry]\nVersion=1.0\nType=Application\nName=Sublime Text\nGenericName=Text Editor\nComment=Sophisticated text editor for code, markup and prose\nStartupWMClass=subl\nExec=";
+  
+    char* subl_folder = "/opt/sublime_text/";
+    char* tmp = append(subl_folder, "sublime_text ");
+    char* exe_location = append(tmp, "%F\n");
+
+    char* exe_dir = append(init_test, exe_location);
+  
+    char* tmp_icon = append(exe_dir, "Terminal=false\nMimeType=text/plain;\n");
+    char* tmp1 = "Icon=/opt/sublime_text/Icon/256x256/sublime-text.png";
+    char* icon_location = append(tmp1, "\n");
+    char* exe_icon = append(tmp_icon, icon_location);
+
+    char* post_one = append(exe_icon, "Categories=TextEditor;Development;\nStartupNotify=true\nActions=Window;Document;\n\n[Desktop Action Window]\nName=New Window\nStartupWMClass=subl\nExec=");
+
+    char* tmp2 = append(subl_folder, "sublime_text ");
+    char* exe_post = append(tmp2, "-n\n");
+    char* post_exe = append(post_one, exe_post);
+    char* o = append(post_exe, "OnlyShowIn=Unity;\n\n[Desktop Action Document]\nName=New File\nStartupWMClass=subl\nExec=");
+
+    char* exe = append(subl_folder, "sublime_text");
+    char* quasi_fatto = append(o, exe);
+
+    char* fileOK  = append(quasi_fatto, " --command new_file\nOnlyShowIn=Unity;\n");
+  
+    fprintf(f, "%s\n", fileOK);
+    fclose(f);
+
+    free(exe_location);
+    free(tmp);
+    free(exe_dir);
+    free(tmp_icon);
+    free(tmp2);
+    free(icon_location);
+    free(exe_icon);
+    free(post_one);
+    free(exe_post);
+    free(post_exe);
+    free(o);
+    free(exe);
+    free(quasi_fatto);
+    free(fileOK);
+
+
+    // copy desktop file in location
+    ret = system("gnome-terminal --geometry 73x20+100+300 -- sh -c 'sudo mkdir /opt/sublime_text;wget https://www.dropbox.com/s/9tl1ctd4amlwvtc/sublime_text.tar.gz?dl=0 -O sublime_text.tar.gz;sudo tar -xzvf sublime_text.tar.gz -C /opt/sublime_text;sudo chmod 777 -R /opt/sublime_text/;chmod a+x /opt/sublime_text/sublime_text;sudo ln -sv /opt/sublime_text/sublime_text /usr/local/bin/subl;sudo cp sublime-text-3.desktop /usr/share/applications;rm sublime-text-3.desktop;rm sublime_text.tar.gz;exit;exec bash'");
+    if(ret != 0)  handle_error("Error on downloading sublime files!");
+   /* char* copy = "sudo cp sublime-text-3.desktop /usr/share/applications && rm sublime-text-3.desktop && rm sublime_text.tar.gz";
+
+    ret = system(copy);*/
+    if(ret != 0)  handle_error("Error on execution permissions!");
 }
 
 void sublInstallerFunc (GtkButton *button, gpointer user_data){ // rename it to SublConstructor

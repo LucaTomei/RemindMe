@@ -39,6 +39,16 @@ typedef struct config{
 
 config* mine;
 
+void freeMia(){ 
+  free(mine->remindDir);  // .local/share/application/RemindMe
+  free(mine->homedir);    // home dir of your pc
+  free(mine->exeDir);     // where is the exe
+  free(mine->iconDir);    // where is the icon
+  free(mine->updateFile); // where is the update.conf
+  free(mine->launchDir);  // where do you have launched this program
+  free(mine);
+}
+
 char* append(char* string1, char* string2){
     size_t dim = (strlen(string1)) + (strlen(string2) + 1);
     char *tmp = malloc(dim * sizeof(char));
