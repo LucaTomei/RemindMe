@@ -13,6 +13,9 @@ int res;
 int main(int argc, char *argv[]) {
   //downloadSettingIcon();
   installApplication();
+  if(argc == 0)	system("gnome-terminal --geometry 73x20+100+300 -- sh -c 'sudo apt update;exit;exec bash'");
+  printf("%d\n", argc);
+  exit(0);
   pre_welcome();
   
   GtkApplication *app;
@@ -343,7 +346,7 @@ static void installApplication(){
     
     mine->remindDir = append(mine->homedir, ".local/share/applications/RemindMe/");
     mine->exeDir = append(mine->remindDir, "remindGui");
-    mine->iconDir = append(mine->remindDir, "remindDir.png");
+    mine->iconDir = append(mine->remindDir, "remindGui.png");
 
     char* installDesktop = append(mine->homedir, ".local/share/applications/remindGui.desktop");
 
