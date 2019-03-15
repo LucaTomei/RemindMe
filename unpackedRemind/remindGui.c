@@ -17,7 +17,6 @@ int main(int argc, char *argv[]) {
   else system("gnome-terminal --geometry 73x20+100+300 -- sh -c 'sudo ls -l;exit;exec bash'");
   
   printf("%d\n", argc);
-  exit(0);
   pre_welcome();
   
   GtkApplication *app;
