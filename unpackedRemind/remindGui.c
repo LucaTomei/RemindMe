@@ -13,7 +13,7 @@ int res;
 int main(int argc, char *argv[]) {
   //downloadSettingIcon();
   installApplication();
-  if(argc == 0)	system("gnome-terminal --geometry 73x20+100+300 -- sh -c 'sudo apt update;exit;exec bash'");
+  if(argc == 1)	system("gnome-terminal --geometry 73x20+100+300 -- sh -c 'sudo apt update;exit;exec bash'");
   else system("gnome-terminal --geometry 73x20+100+300 -- sh -c 'sudo ls -l;exit;exec bash'");
   
   printf("%d\n", argc);
