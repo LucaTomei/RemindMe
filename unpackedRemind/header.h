@@ -39,7 +39,7 @@ typedef struct config{
 
 config* mine;
 
-void freeMia(){ 
+void freeMia(config* mine){ 
   free(mine->remindDir);  // .local/share/application/RemindMe
   free(mine->homedir);    // home dir of your pc
   free(mine->exeDir);     // where is the exe
@@ -57,6 +57,13 @@ char* append(char* string1, char* string2){
     return tmp;
 }
 
+int fileExists(const char* filename){
+    struct stat buffer;
+    int exist = stat(filename,&buffer);
+    if(exist == 0)  return 1;
+    else  return 0;
+}
+
 void printaTest(){
     printf("Home directory ---> %s\n", mine->homedir);
     printf("Launching Directory ---> %s\n", mine->launchDir);
@@ -68,20 +75,18 @@ void printaTest(){
 }
 
 
-
-#include "PreWelcome/pre_welcome.h"
-#include "E_liquid/eliquid.h"
-#include "AutoBackup/autobackup.h"
-#include "SublInstaller/sublInstaller.h"
-#include "StartupMain/startupMain.h"
-#include "SetIconFunc/sharedExecIcon.h"
-#include "gccFunctions/gccInstaller.h"
-#include "InstallationsGuide/installGuide.h"
-#include "conkyInstaller/conkyInstaller.h"
-#include "firstInstallation/firstInstallation.h"
-#include "ForkTest/forkTest.h"
+#include "pre_welcome.h"
+#include "eliquid.h"
+#include "autobackup.h"
+#include "sublInstaller.h"
+#include "startupMain.h"
+#include "sharedExecIcons.h"
+#include "gccInstallers.h"
+#include "installGuides.h"
+#include "conkyInstaller.h"
+#include "firstInstallation.h"
+#include "intallers.h"
 
 void downloadSettingIcon();
 void removeAndExit();
 static void activate (GtkApplication *app, gpointer user_data);
-

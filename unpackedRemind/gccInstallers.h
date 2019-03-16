@@ -70,9 +70,7 @@ void gcc_8Func (GtkButton *button, gpointer   user_data){
 
   /*The main purpose of this is to show dialog's child widget, label*/
   gtk_widget_show_all (dialog);
-  
-  /*Connecting the "response" signal from the user to the associated
-  callback function*/
-  g_signal_connect (GTK_DIALOG (dialog), "response", G_CALLBACK (on_responsegcc_8Func), NULL);
 
+
+  g_signal_connect(GTK_DIALOG (dialog), "response", G_CALLBACK (on_responsegcc_8Func), NULL);
 }
