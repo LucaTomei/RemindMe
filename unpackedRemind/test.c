@@ -1,68 +1,69 @@
 #include <gtk/gtk.h>
+#include <string.h>
+#include <stdlib.h>
 
-void button_pressed(GtkWidget *widget, gpointer window) {
-    
-   gchar *str;
-   str = g_strdup_printf("%s button clicked", 
-         gtk_button_get_label(GTK_BUTTON(widget)));
-
-   gtk_statusbar_push(GTK_STATUSBAR(window),
-         gtk_statusbar_get_context_id(GTK_STATUSBAR(window), str), str);
-   g_free(str);
+void updateLabel(GtkLabel *sum, int num)
+{
+    gchar *display;
+    display = g_strdup_printf("%d", num);         //convert num to str
+    gtk_label_set_text (GTK_LABEL(sum), display); //set label to "display"
+    g_free(display);                              //free display
 }
 
-int main(int argc, char *argv[]) {
+void buttonAdd (GtkButton *button, GtkLabel *sum)
+{
+    int num = atoi(gtk_label_get_text(sum));
+    num += 1;
+    g_print("%d\n",num);
+    updateLabel(GTK_LABEL(sum), num);
+}
 
-  GtkWidget *window;
-  GtkWidget *hbox;
-  GtkWidget *vbox;
-  GtkWidget *halign;
-  GtkWidget *balign;
-  GtkWidget *button1;
-  GtkWidget *button2;
-  GtkWidget *statusbar;
+void buttonSub (GtkButton *button, GtkLabel *sum)
+{
+    int num = atoi(gtk_label_get_text(sum));
+    num -= 1;
+    g_print("%i\n",num);
+    updateLabel(GTK_LABEL(sum),num);
 
-  gtk_init(&argc, &argv);
+}
 
-  window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-  gtk_window_set_default_size(GTK_WINDOW(window), 300, 200);
-  gtk_window_set_title(GTK_WINDOW(window), "GtkStatusbar");
+int main(int argc, char **argv)
+{
+    GtkWidget *window;
+    GtkWidget *addButton;
+    GtkWidget *subButton;
+    GtkWidget *grid;
+    GtkWidget *sum;
 
-  vbox = gtk_vbox_new(FALSE, 0);
+    gtk_init (&argc,&argv);
 
-  hbox = gtk_hbox_new(FALSE, 0);
-  gtk_container_add(GTK_CONTAINER(window), vbox);
+    //Declarations
+    window    = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+    sum       = gtk_label_new ("0");
+    grid      = gtk_grid_new ();
+    addButton = gtk_button_new_with_label ("Add Value");
+    subButton = gtk_button_new_with_label ("Sub Value");
 
-  halign = gtk_alignment_new(0, 0, 0, 0);
-  gtk_container_add(GTK_CONTAINER(halign), hbox);
-  gtk_box_pack_start(GTK_BOX(vbox), halign, TRUE, TRUE, 5);
+    //Set Properties
+    gtk_container_set_border_width (GTK_CONTAINER(window), 20);
+    gtk_widget_set_size_request    (GTK_WIDGET(window), 150, 100);
+    gtk_label_set_selectable       (GTK_LABEL(sum), TRUE);
+    gtk_grid_set_row_spacing       (GTK_GRID(grid), 4);
+    gtk_grid_set_column_spacing    (GTK_GRID(grid), 4);
+    gtk_container_add              (GTK_CONTAINER(window), grid);
 
-  button1 = gtk_button_new_with_label("OK");
-  gtk_widget_set_size_request(button1, 70, 30 );
-  button2 = gtk_button_new_with_label("Apply");
-  gtk_widget_set_size_request(button2, 70, 30 );
+    //Fill the grid with shit                  (x, y, h, v)
+    gtk_grid_attach (GTK_GRID(grid), addButton, 0, 0, 1, 1);
+    gtk_grid_attach (GTK_GRID(grid), subButton, 1, 0, 1, 1);
+    gtk_grid_attach (GTK_GRID(grid), sum,       0, 2, 2, 1);
 
-  gtk_box_pack_start(GTK_BOX(hbox), button1, FALSE, FALSE, 5);
-  gtk_box_pack_start(GTK_BOX(hbox), button2, FALSE, FALSE, 0);
+    gtk_widget_show_all (window);
 
-  balign = gtk_alignment_new(0, 1, 1, 0);
-  statusbar = gtk_statusbar_new();
-  gtk_container_add(GTK_CONTAINER(balign), statusbar);
-  gtk_box_pack_start(GTK_BOX(vbox), balign, FALSE, FALSE, 0);
+    g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(gtk_main_quit), NULL);
+    g_signal_connect(G_OBJECT(addButton), "clicked", G_CALLBACK(buttonAdd), sum);
+    g_signal_connect(G_OBJECT(subButton), "clicked", G_CALLBACK(buttonSub), sum);
 
-  g_signal_connect(G_OBJECT(button1), "clicked", 
-           G_CALLBACK(button_pressed), G_OBJECT(statusbar));
+    gtk_main();
 
-  g_signal_connect(G_OBJECT(button2), "clicked", 
-           G_CALLBACK(button_pressed), G_OBJECT(statusbar));
-
-  g_signal_connect(G_OBJECT(window), "destroy",
-        G_CALLBACK(gtk_main_quit), NULL);
-
-  gtk_widget_show_all(window);
-
-  gtk_main();
-
-  return 0;
+    return 0;
 }

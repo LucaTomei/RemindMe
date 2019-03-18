@@ -13,7 +13,7 @@ int res;
 int main(int argc, char *argv[]) {
   //downloadSettingIcon();
   installApplication();
-  if(argc == 1)	 pre_welcome();
+  //if(argc == 1)	 pre_welcome();
   
   GtkApplication *app;
   int status;
