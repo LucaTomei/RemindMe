@@ -127,4 +127,3 @@ static void activate (GtkApplication *app, gpointer user_data){
   
   gtk_main();
 }
-

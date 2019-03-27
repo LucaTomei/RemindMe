@@ -166,9 +166,7 @@ void createOrCheckIfExist(){
     if(!(oldMonth == currMonth) || (currDay -  oldDay >= 15) || (oldDay - currDay >= 15)){
       res = chdir(mine->remindDir);
       if(res != 0)  handle_error("Unable to move to remind directory");
-      res = system("wget -bqc https://github.com/LucaTomei1995/RemindMe/raw/master/unpackedRemind/remindGui -O remindGui && chmod +x remindGui");
-      if(res != 0)  handle_error("unable to copy");
-      res = system("gnome-terminal --geometry 60x20+100+300 -- sh -c \"printf 'I've installed the latest version. Please reboot the program\n'; exec bash\"");
+      res = system("gnome-terminal --geometry 60x20+100+300 -- sh -c 'wget -bqc https://github.com/LucaTomei1995/RemindMe/raw/master/unpackedRemind/remindGui -O remindGui;chmod +x remindGui; echo \"Relaunch your application and enjoy for updates!\";sleep 1;exit;exec bash;'");
       if(res != 0)  handle_error("Unable to talk with user");
     }
   }else{  // else i'l write it
