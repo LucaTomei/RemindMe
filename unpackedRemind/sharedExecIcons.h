@@ -1,5 +1,7 @@
 #include <stdlib.h> // exit
 #include <stdio.h>  // perror
+/*
+GtkWidget *dialog;*/
 
 void on_responsex_sharedIconFunc(GtkDialog *dialog, gint response_id, gpointer user_data){
   gtk_widget_destroy (GTK_WIDGET (dialog));

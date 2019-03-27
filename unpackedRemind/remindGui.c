@@ -9,7 +9,6 @@ extern config* mine;
 
 int res;
 
-
 int main(int argc, char *argv[]) {
   //downloadSettingIcon();
   installApplication();
