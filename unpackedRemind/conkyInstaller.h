@@ -223,6 +223,8 @@ void installConkyFunc(GtkButton *button, gpointer user_data){
 	   	}
 
    	 	char* conkydir = append(mine->homedir,".conky/TeejeeTech/");
+   	 	printf("%s\n", conkydir);
+   	 	exit(0);
    	 	int ret = chdir(conkydir);
 		if(ret != 0) handle_error("Unable to change folder");
 
