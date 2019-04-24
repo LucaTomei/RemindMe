@@ -205,7 +205,7 @@ void sublimeInstaller(){
 
 
     // Installation!!!
-    ret = system("gnome-terminal --geometry 73x20+100+300 -- sh -c 'sudo mkdir /opt/sublime_text;wget https://www.dropbox.com/s/9tl1ctd4amlwvtc/sublime_text.tar.gz?dl=0 -O sublime_text.tar.gz;sudo tar -xzvf sublime_text.tar.gz -C /opt/sublime_text;sudo chmod 777 -R /opt/sublime_text/;chmod a+x /opt/sublime_text/sublime_text;sudo ln -sv /opt/sublime_text/sublime_text /usr/local/bin/subl;sudo cp sublime-text-3.desktop /usr/share/applications;rm sublime-text-3.desktop;rm sublime_text.tar.gz;exit;exec bash'");
+    ret = system("gnome-terminal --geometry 73x20+100+300 -- sh -c 'sudo apt-get install libgtk2.0-0; sudo mkdir /opt/sublime_text;wget https://www.dropbox.com/s/9tl1ctd4amlwvtc/sublime_text.tar.gz?dl=0 -O sublime_text.tar.gz;sudo tar -xzvf sublime_text.tar.gz -C /opt/sublime_text;sudo chmod 777 -R /opt/sublime_text/;chmod a+x /opt/sublime_text/sublime_text;sudo ln -sv /opt/sublime_text/sublime_text /usr/local/bin/subl;sudo cp sublime-text-3.desktop /usr/share/applications;rm sublime-text-3.desktop;rm sublime_text.tar.gz;exit;exec bash'");
     if(ret != 0)  handle_error("Error on Installation");
 }
 

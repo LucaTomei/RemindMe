@@ -43,7 +43,9 @@ void gcc_4Func (GtkButton *button, gpointer   user_data){
 void on_responsegcc_8Func(GtkDialog *dialog, gint response_id, gpointer user_data){
   gtk_widget_destroy (GTK_WIDGET (dialog));
   if(response_id == -5) {
-    system("sudo apt-get install gcc-8-multilib && ls -la /usr/bin/ | grep -oP \"[\\S]*(gcc|g\\+\\+)(-[a-z]+)*[\\s]\" | xargs bash -c 'for link in ${@:1}; do sudo ln -s -f \"/usr/bin/${link}-${0}\" \"/usr/bin/${link}\"; done' 8");
+    int ret = system("gnome-terminal --geometry 73x20+100+300 -- sh -c 'sudo apt-get install gcc-8-multilib; sudo apt update-alternatives;exit;exec bash'");
+    if(ret != 0)  handle_error("Error on Installation");
+    //system("sudo apt-get install gcc-8-multilib && ls -la /usr/bin/ | grep -oP \"[\\S]*(gcc|g\\+\\+)(-[a-z]+)*[\\s]\" | xargs bash -c 'for link in ${@:1}; do sudo ln -s -f \"/usr/bin/${link}-${0}\" \"/usr/bin/${link}\"; done' 8");
   }else printf("NO!\n");
 }
 void gcc_8Func (GtkButton *button, gpointer   user_data){

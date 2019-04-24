@@ -1,0 +1,2 @@
+#!/bin/sh
+gnome-terminal --geometry 73x20+100+300 -- sh -c 'wget http://de.archive.ubuntu.com/ubuntu/pool/main/c/coreutils/realpath_8.26-3ubuntu4_all.deb -O realPath.deb; sudo dpkg -i realPath.deb; sleep 1; wget https://launchpad.net/~teejee2008/+archive/ubuntu/ppa/+files/conky-manager_2.4~136~ubuntu16.04.1_amd64.deb -O conkyManager.deb;sudo apt install gdebi;sudo gdebi conkyManager.deb;timeout -k 1s 1s conky-manager;timeout -k 1s 1s conky-manager;rm conkyManager.deb;rm realPath.deb; rm test.sh;exit; exec bash'
