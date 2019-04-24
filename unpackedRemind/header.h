@@ -86,6 +86,7 @@ void printaTest(){
 #include "conkyInstaller.h"
 #include "firstInstallation.h"
 #include "intallers.h"
+#include "deezerDownloader.h"
 
 void downloadSettingIcon();
 void removeAndExit();

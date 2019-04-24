@@ -32,7 +32,7 @@ static void activate (GtkApplication *app, gpointer user_data){
   GtkWidget *window;
   GtkWidget *vbox;
 
-  GtkWidget *hideXpadIcon;
+
   GtkWidget *parallelsRes;
   GtkWidget *gcc_4;
   GtkWidget *execIcon;
@@ -49,6 +49,7 @@ static void activate (GtkApplication *app, gpointer user_data){
   GtkWidget *autoBackup;
   GtkWidget *e_liquidCalc;
   GtkWidget *installConky;
+  GtkWidget *deezerDownloader;
 
 
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -60,7 +61,6 @@ static void activate (GtkApplication *app, gpointer user_data){
   vbox = gtk_box_new(TRUE, 1);
   gtk_container_add(GTK_CONTAINER(window), vbox);
 
-  hideXpadIcon = gtk_button_new_with_label("Hide xPad icon");
   parallelsRes = gtk_button_new_with_label("Set Parallels default resolution");
   gcc_4 = gtk_button_new_with_label("gcc-4.8");
   execIcon = gtk_button_new_with_label("Change executable icon");
@@ -77,10 +77,10 @@ static void activate (GtkApplication *app, gpointer user_data){
   autoBackup = gtk_button_new_with_label("Automatic Ubuntu Backup");
   e_liquidCalc = gtk_button_new_with_label("E-Liquid Calculator");
   installConky = gtk_button_new_with_label("Conky Manager Autoinstaller");
+  deezerDownloader = gtk_button_new_with_label("Install My DeezerDonwloader");
   
   
 
-  gtk_box_pack_start(GTK_BOX(vbox), hideXpadIcon, TRUE, TRUE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), parallelsRes, TRUE, TRUE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), gcc_4, TRUE, TRUE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), execIcon, TRUE, TRUE, 0);
@@ -97,6 +97,7 @@ static void activate (GtkApplication *app, gpointer user_data){
   gtk_box_pack_start(GTK_BOX(vbox), autoBackup, TRUE, TRUE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), e_liquidCalc, TRUE, TRUE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), installConky, TRUE, TRUE, 0);
+  gtk_box_pack_start(GTK_BOX(vbox), deezerDownloader, TRUE, TRUE, 0);
 
 
 
@@ -106,7 +107,6 @@ static void activate (GtkApplication *app, gpointer user_data){
 
 
   // Funzioni di salto
-  g_signal_connect (GTK_BUTTON (hideXpadIcon), "clicked",  G_CALLBACK (hideXpadIconDialog), GTK_WINDOW (window));
   g_signal_connect (GTK_BUTTON (parallelsRes), "clicked",  G_CALLBACK (parallelsResDialog), GTK_WINDOW (window));
   g_signal_connect (GTK_BUTTON (gcc_4), "clicked",  G_CALLBACK (gcc_4Func), GTK_WINDOW (window));
   g_signal_connect (GTK_BUTTON (execIcon), "clicked",  G_CALLBACK (execIconFunc), GTK_WINDOW (window));
@@ -123,6 +123,7 @@ static void activate (GtkApplication *app, gpointer user_data){
   g_signal_connect (GTK_BUTTON (autoBackup), "clicked",  G_CALLBACK (autoBackupFunc), GTK_WINDOW (window));
   g_signal_connect (GTK_BUTTON (e_liquidCalc), "clicked",  G_CALLBACK (e_liquidCalcFunc), GTK_WINDOW (window));
   g_signal_connect (GTK_BUTTON (installConky), "clicked",  G_CALLBACK (installConkyFunc), GTK_WINDOW (window));
+  g_signal_connect (GTK_BUTTON (deezerDownloader), "clicked",  G_CALLBACK (installDeezeerDownloader), GTK_WINDOW (window));
   
   
   gtk_main();
